@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vipul Blog</title>
+</head>
+<body>
+  <h1>Vipul Blogs</h1>
+  <input type="text" id="input" placeholder="Enter your blog post" style="width:300px;">
+  <button onclick="postBlog()">Post</button>
+  <button onclick="loadPosts()">Load Posts</button>
+
+  <h3>All Posts:</h3>
+  <div id="posts"></div>
+
+  <script>
+    function postBlog() {
+      const input = document.getElementById("input").value;
+
+      fetch("/savepost", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ content: input })
+      })
+      .then(res => res.text())
+      .then(msg => {
+        alert(msg);
+        document.getElementById("input").value = "";
+        loadPosts();
+      });
+    }
+
+    function loadPosts() {
+      fetch("/getposts")
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById("posts").innerText = data;
+        });
+    }
+
+    // Load posts initially
+    window.onload = loadPosts;
+  </script>
+</body>
+</html>
