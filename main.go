@@ -3,55 +3,54 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"log"
 	"net/http"
-	"os"
 )
 
-// Struct to receive/send post data
-type BlogPost struct {
-	Content string `json:"content"`
+type Blog struct {
+	Blog string `json:"blog"`
 }
 
-// Handle saving a post
-func savepostHandler(w http.ResponseWriter, r *http.Request) {
+func handleLogin(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func handleSignup(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func handlePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		var post BlogPost
-		err := json.NewDecoder(r.Body).Decode(&post)
+		var data Blog
+		err := json.NewDecoder(r.Body).Decode(&data)
 		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
 
-		// Append to db.txt
-		f, err := os.OpenFile("db.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			http.Error(w, "Unable to write to file", http.StatusInternalServerError)
-			return
-		}
-		defer f.Close()
-
-		f.WriteString(post.Content + "\n")
-		fmt.Fprint(w, "Saved!")
+		// Print or process the data
+		fmt.Printf("Received blog: %s\n", data.Blog)
+		fmt.Fprintf(w, " %s\n", data.Blog)
 	}
 }
 
-// Handle getting all posts
-func getPostsHandler(w http.ResponseWriter, r *http.Request) {
-	data, err := ioutil.ReadFile("db.txt")
-	if err != nil {
-		http.Error(w, "Unable to read file", http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write(data)
+func handleRetrieve(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func handleUpdate(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func handleDelete(w http.ResponseWriter, r *http.Request) {
+
 }
 
 func main() {
 	http.Handle("/", http.FileServer(http.Dir("./static")))
-	http.HandleFunc("/savepost", savepostHandler)
-	http.HandleFunc("/getposts", getPostsHandler)
+	http.HandleFunc("/save", handlePost)
 
-	fmt.Println("🚀 Server running at http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
+	port := ":5000"
+	fmt.Println("Server is running on port " + port)
+	log.Fatal(http.ListenAndServe(port, nil))
 }

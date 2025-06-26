@@ -2,46 +2,260 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Vipul Blog</title>
+  <title>Blog</title>
 </head>
-<body>
-  <h1>Vipul Blogs</h1>
-  <input type="text" id="input" placeholder="Enter your blog post" style="width:300px;">
-  <button onclick="postBlog()">Post</button>
-  <button onclick="loadPosts()">Load Posts</button>
+<style>
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-  <h3>All Posts:</h3>
-  <div id="posts"></div>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e9ebee;
+    padding: 20px;
+    color: #1d2129;
+  }
+
+  h1 {
+    text-align: center;
+    color: #3b5998;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    color: #3b5998;
+    margin-bottom: 15px;
+  }
+
+  /* Login Form */
+  .form {
+    background-color: white;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    text-align: center;
+  }
+
+  .form p {
+    font-size: 14px;
+    color: #606770;
+    margin-bottom: 20px;
+  }
+
+  .username,
+  .password {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    text-align: left;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    padding: 10px;
+    border: 1px solid #ccd0d5;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+
+  .form button {
+    background-color: #1877f2;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    font-size: 15px;
+    border: none;
+    border-radius: 4px;
+    margin-top: 15px;
+    cursor: pointer;
+  }
+
+  .form button:hover {
+    background-color: #145dbf;
+  }
+
+  /* Blog Navigation Buttons */
+  div > button {
+    background-color: #4267b2;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  div > button:hover {
+    background-color: #365899;
+  }
+
+  /* Blog Sections */
+  #allBlogsSection,
+  #myBlogsSection {
+    background-color: white;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #allBlogsContainer p {
+    background-color: #f6f7f9;
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-left: 4px solid #4267b2;
+    border-radius: 4px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  /* Textarea (Post Box) */
+  #inputbox {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    border: 1px solid #ccd0d5;
+    border-radius: 4px;
+    resize: vertical;
+    margin-bottom: 10px;
+  }
+
+  /* Post Button */
+  #myBlogsSection button {
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+
+  #myBlogsSection button:hover {
+    background-color: #145dbf;
+  }
+
+  #para {
+    margin-top: 10px;
+    color: green;
+    font-weight: 500;
+  }
+
+  @media (max-width: 600px) {
+    #allBlogsSection, #myBlogsSection, .form {
+      padding: 15px;
+      width: 95%;
+    }
+  }
+</style>
+
+
+<body>
+
+  <div>
+     <div>
+      <h1>A Free speech Platform</h1>
+      <p>It was neither possible nor necessary to educate people who never questioned anything </p>
+    </div>
+  </div>
+  <div class="form">
+
+   
+    <h1>Sign up</h1>
+
+    <div class="username">
+         <label for="">Username</label>
+    <input type="text" placeholder="username">
+    </div>
+   
+    <div class="password">
+        <label for="">Password</label>
+    <input type="password" placeholder="password">
+    </div>
+
+    <div>
+      <button>Login</button>
+    </div>
+    
+  </div>
+
+  <h1>FreeMind</h1>
+
+  <div>
+    <button onclick="getBlogs()">All blogs</button>
+    <button onclick="showMyBlogs()">My blogs</button>
+  </div>
+
+  <!-- All Blogs Section -->
+  <div id="allBlogsSection" style="display: block;">
+    <h2>All Blogs</h2>
+    <div id="allBlogsContainer">
+      <!-- Blogs will be inserted here -->
+    </div>
+  </div>
+
+  <!-- My Blogs Section -->
+  <div id="myBlogsSection" style="display: none;">
+    <h2>Your Blogs</h2>
+   <textarea id="inputbox" rows="4" placeholder="What's on your mind?" ></textarea>
+
+    <button onclick="handlePost()">Post</button>
+    <p id="para"></p>
+  </div>
 
   <script>
-    function postBlog() {
-      const input = document.getElementById("input").value;
+    // Show All Blogs section and hide My Blogs
+    const getBlogs = async () => {
+      document.getElementById('allBlogsSection').style.display = 'block';
+      document.getElementById('myBlogsSection').style.display = 'none';
 
-      fetch("/savepost", {
-        method: "POST",
+      const response = await fetch("http://localhost:5000/getBlogs");
+      const blogs = await response.json();
+
+      const container = document.getElementById('allBlogsContainer');
+      container.innerHTML = '';
+
+      blogs.forEach(blog => {
+        const p = document.createElement('p');
+        p.innerText = blog.blog;
+        container.appendChild(p);
+      });
+    };
+
+    // Show My Blogs section and hide All Blogs
+    const showMyBlogs = () => {
+      document.getElementById('allBlogsSection').style.display = 'none';
+      document.getElementById('myBlogsSection').style.display = 'block';
+    };
+
+    // Submit a new blog
+    const handlePost = async () => {
+      const text = document.getElementById('inputbox').value;
+
+      const response = await fetch("http://localhost:5000/save", {
+        method: 'POST',
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ content: input })
-      })
-      .then(res => res.text())
-      .then(msg => {
-        alert(msg);
-        document.getElementById("input").value = "";
-        loadPosts();
+        body: JSON.stringify({ blog: text })
       });
-    }
 
-    function loadPosts() {
-      fetch("/getposts")
-        .then(res => res.text())
-        .then(data => {
-          document.getElementById("posts").innerText = data;
-        });
-    }
-
-    // Load posts initially
-    window.onload = loadPosts;
+      const result = await response.text();
+      document.getElementById("para").innerText = result;
+      document.getElementById("inputbox").value = ""; // clear input
+    };
   </script>
+
 </body>
 </html>
